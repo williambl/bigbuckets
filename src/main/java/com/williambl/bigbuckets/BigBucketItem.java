@@ -168,6 +168,13 @@ public class BigBucketItem extends Item {
         tooltip.add(new StringTextComponent("Fullness: "+getFullness(stack)));
     }
 
+    @Override
+    public ITextComponent getDisplayName(ItemStack stack) {
+        if (getFluid(stack) == Fluids.EMPTY)
+            return super.getDisplayName(stack);
+        return super.getDisplayName(stack).appendSibling(new StringTextComponent(" (").appendSibling(getFluid(stack).getDefaultState().getBlockState().getBlock().getNameTextComponent()).appendSibling(new StringTextComponent(")")));
+    }
+
     public Fluid getFluid(ItemStack stack) {
         CompoundNBT tag = stack.getOrCreateChildTag("BigBuckets");
 
