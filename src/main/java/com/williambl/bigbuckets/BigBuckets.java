@@ -4,6 +4,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.SpecialRecipe;
+import net.minecraft.item.crafting.SpecialRecipeSerializer;
+import net.minecraft.world.gen.layer.EdgeLayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -15,6 +20,7 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ObjectHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,6 +34,14 @@ public class BigBuckets
     private static final Logger LOGGER = LogManager.getLogger();
 
     public static final String MODID = "bigbuckets";
+
+    @ObjectHolder("bigbuckets:bigbucket")
+    public static BigBucketItem BIG_BUCKET_ITEM;
+
+    @ObjectHolder("bigbuckets:crafting_special_big_bucket")
+    public static IRecipeSerializer BIG_BUCKET_RECIPE_SERIALIZER;
+    @ObjectHolder("bigbuckets:crafting_special_big_bucket_increase_capacity")
+    public static IRecipeSerializer BIG_BUCKET_INCREASE_CAPACITY_RECIPE_SERIALIZER;
 
     public BigBuckets() {
         // Register the setup method for modloading
@@ -67,9 +81,17 @@ public class BigBuckets
     @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents {
 
-            @SubscribeEvent
-            public static void registerItems(final RegistryEvent.Register<Item> event) {
-                event.getRegistry().register(new BigBucketItem(new Item.Properties().maxStackSize(1).group(ItemGroup.MISC)).setRegistryName("bigbucket"));
-            }
+        @SubscribeEvent
+        public static void registerItems(final RegistryEvent.Register<Item> event) {
+            event.getRegistry().register(new BigBucketItem(new Item.Properties().maxStackSize(1).group(ItemGroup.MISC)).setRegistryName("bigbucket"));
+        }
+
+        @SubscribeEvent
+        public static void registerRecipes(final RegistryEvent.Register<IRecipeSerializer<?>> event) {
+            event.getRegistry().registerAll(
+                    new SpecialRecipeSerializer<>(BigBucketRecipe::new).setRegistryName("crafting_special_big_bucket"),
+                    new SpecialRecipeSerializer<>(BigBucketIncreaseCapacityRecipe::new).setRegistryName("crafting_special_big_bucket_increase_capacity")
+            );
+        }
     }
 }
