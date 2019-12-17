@@ -1,20 +1,20 @@
 package com.williambl.bigbuckets;
 
-import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.init.Items;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.SpecialRecipe;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
-public class BigBucketIncreaseCapacityRecipe extends SpecialRecipe {
-    public BigBucketIncreaseCapacityRecipe(ResourceLocation idIn) {
-        super(idIn);
+public class BigBucketIncreaseCapacityRecipe extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
+    public BigBucketIncreaseCapacityRecipe() {
+        super();
     }
 
     @Override
-    public boolean matches(CraftingInventory inv, World worldIn) {
+    public boolean matches(InventoryCrafting inv, World worldIn) {
         int i = 0;
         ItemStack bigBucketStack = ItemStack.EMPTY;
 
@@ -40,7 +40,7 @@ public class BigBucketIncreaseCapacityRecipe extends SpecialRecipe {
     }
 
     @Override
-    public ItemStack getCraftingResult(CraftingInventory inv) {
+    public ItemStack getCraftingResult(InventoryCrafting inv) {
         int i = 0;
         ItemStack bigBucketStack = ItemStack.EMPTY;
 
@@ -60,16 +60,31 @@ public class BigBucketIncreaseCapacityRecipe extends SpecialRecipe {
         return bigBucketStack;
     }
 
-    @Override
-    public IRecipeSerializer<?> getSerializer() {
-        return BigBuckets.BIG_BUCKET_INCREASE_CAPACITY_RECIPE_SERIALIZER;
-    }
-
     /**
      * Used to determine if this recipe can fit in a grid of the given width/height
      */
     @Override
     public boolean canFit(int width, int height) {
         return width * height >= 2;
+    }
+
+    @Override
+    public ItemStack getRecipeOutput() {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
+        return NonNullList.create();
+    }
+
+    @Override
+    public NonNullList<Ingredient> getIngredients() {
+        return NonNullList.from(Ingredient.fromItem(Items.BUCKET), Ingredient.fromItem(BigBuckets.BIG_BUCKET_ITEM));
+    }
+
+    @Override
+    public boolean isDynamic() {
+        return true;
     }
 }

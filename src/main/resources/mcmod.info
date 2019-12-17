@@ -1,0 +1,16 @@
+[
+{
+  "modid": "bigbuckets",
+  "name": "Big Buckets",
+  "description": "Adds upgradeable buckets.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "http://curseforge.com/minecraft/mc-mods/bigbuckets",
+  "updateJSON": "https://raw.githubusercontent.com/williambl/bigbuckets/master/update.json",
+  "authorList": ["Willbl3pic"],
+  "credits": "",
+  "logoFile": "logo.png",
+  "screenshots": [],
+  "dependencies": []
+}
+]

@@ -1,20 +1,21 @@
 package com.williambl.bigbuckets;
 
-import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.init.Items;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.SpecialRecipe;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-public class BigBucketRecipe extends SpecialRecipe {
-   public BigBucketRecipe(ResourceLocation idIn) {
-      super(idIn);
+public class BigBucketRecipe extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
+   public BigBucketRecipe() {
+      super();
    }
 
    @Override
-   public boolean matches(CraftingInventory inv, World worldIn) {
+   public boolean matches(InventoryCrafting inv, World worldIn) {
       int i = 0;
 
       for (int j = 0; j < inv.getSizeInventory(); ++j) {
@@ -31,16 +32,12 @@ public class BigBucketRecipe extends SpecialRecipe {
    }
 
    @Override
-   public ItemStack getCraftingResult(CraftingInventory inv) {
+   public ItemStack getCraftingResult(InventoryCrafting inv) {
       ItemStack stack = new ItemStack(BigBuckets.BIG_BUCKET_ITEM);
-      stack.getOrCreateChildTag("BigBuckets").putInt("Capacity", 2);
+      stack.getOrCreateSubCompound("BigBuckets").setInteger("Capacity", 2);
       return stack;
    }
 
-   @Override
-   public IRecipeSerializer<?> getSerializer() {
-      return BigBuckets.BIG_BUCKET_RECIPE_SERIALIZER;
-   }
 
    /**
     * Used to determine if this recipe can fit in a grid of the given width/height
@@ -49,4 +46,20 @@ public class BigBucketRecipe extends SpecialRecipe {
    public boolean canFit(int width, int height) {
       return width * height >= 2;
    }
+
+   @Override
+   public ItemStack getRecipeOutput() {
+      return ItemStack.EMPTY;
+   }
+
+   @Override
+   public NonNullList<Ingredient> getIngredients() {
+      return NonNullList.withSize(2, Ingredient.fromItem(Items.BUCKET));
+   }
+
+   @Override
+   public boolean isDynamic() {
+      return true;
+   }
+
 }
