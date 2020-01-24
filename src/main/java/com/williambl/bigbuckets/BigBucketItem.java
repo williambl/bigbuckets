@@ -178,6 +178,18 @@ public class BigBucketItem extends Item {
     }
 
     @Override
+    public boolean showDurabilityBar(ItemStack stack) {
+        return getCapacity(stack) > 0;
+    }
+
+    @Override
+    public double getDurabilityForDisplay(ItemStack stack) {
+        double fullness = getFullness(stack);
+        double capacity = getCapacity(stack);
+        return fullness == capacity ? 0.0 : (capacity-fullness)/capacity;
+    }
+
+    @Override
     public void fillItemGroup(ItemGroup itemGroup, NonNullList<ItemStack> itemStacks) {
         ItemStack stack = new ItemStack(this);
         setCapacity(stack, 16);
