@@ -12,6 +12,7 @@ import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
@@ -174,6 +175,13 @@ public class BigBucketItem extends Item {
         if (getFluid(stack) == Fluids.EMPTY)
             return super.getDisplayName(stack);
         return super.getDisplayName(stack).appendSibling(new StringTextComponent(" (").appendSibling(getFluid(stack).getDefaultState().getBlockState().getBlock().getNameTextComponent()).appendSibling(new StringTextComponent(")")));
+    }
+
+    @Override
+    public void fillItemGroup(ItemGroup itemGroup, NonNullList<ItemStack> itemStacks) {
+        ItemStack stack = new ItemStack(this);
+        setCapacity(stack, 16);
+        itemStacks.add(stack);
     }
 
     public Fluid getFluid(ItemStack stack) {
