@@ -1,5 +1,6 @@
 package com.williambl.bigbuckets.jei;
 
+import com.williambl.bigbuckets.BigBucketIncreaseCapacityRecipe;
 import com.williambl.bigbuckets.BigBucketRecipe;
 import com.williambl.bigbuckets.BigBuckets;
 import mezz.jei.api.IModPlugin;
@@ -27,12 +28,14 @@ public class BigBucketsJeiPlugin implements IModPlugin {
     @Override
     public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
         registration.getCraftingCategory().addCategoryExtension(BigBucketRecipe.class, bigBucketRecipe -> new BigBucketRecipeCategoryExtension());
+        registration.getCraftingCategory().addCategoryExtension(BigBucketIncreaseCapacityRecipe.class, bigBucketUpgrade -> new BigBucketUpgradeCategoryExtension());
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         List<IRecipe<?>> recipes = new ArrayList<>();
         recipes.add(new BigBucketRecipe(new ResourceLocation(BigBuckets.MODID, "bigbucket")));
+        recipes.add(new BigBucketIncreaseCapacityRecipe(new ResourceLocation(BigBuckets.MODID, "bigbucket_increase_capacity")));
         registration.addRecipes(recipes, VanillaRecipeCategoryUid.CRAFTING);
 
         registration.addIngredientInfo(new ItemStack(BigBuckets.BIG_BUCKET_ITEM), VanillaTypes.ITEM,
