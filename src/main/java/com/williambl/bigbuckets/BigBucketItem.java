@@ -31,7 +31,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
@@ -49,7 +51,7 @@ public class BigBucketItem extends Item {
     }
 
     protected ItemStack emptyBucket(ItemStack stack, PlayerEntity player) {
-        drain(stack, 1);
+        drain(stack, FluidAttributes.BUCKET_VOLUME);
         return stack;
     }
 
@@ -71,7 +73,7 @@ public class BigBucketItem extends Item {
                     BlockState blockstate1 = worldIn.getBlockState(blockpos);
                     if (blockstate1.getBlock() instanceof IBucketPickupHandler) {
                         Fluid fluid = ((IBucketPickupHandler) blockstate1.getBlock()).pickupFluid(worldIn, blockpos, blockstate1);
-                        if (fluid != Fluids.EMPTY && canAcceptFluid(stack, fluid)) {
+                        if (fluid != Fluids.EMPTY && canAcceptFluid(stack, fluid, FluidAttributes.BUCKET_VOLUME)) {
                             playerIn.addStat(Stats.ITEM_USED.get(this));
 
                             SoundEvent soundevent = this.getFluid(stack).getAttributes().getEmptySound();
@@ -111,7 +113,7 @@ public class BigBucketItem extends Item {
     }
 
     private ItemStack fillBucket(ItemStack stack, PlayerEntity player, Fluid fluid) {
-        fill(stack, new FluidStack(fluid, 1));
+        fill(stack, new FluidStack(fluid, FluidAttributes.BUCKET_VOLUME));
         return stack;
     }
 
@@ -179,8 +181,8 @@ public class BigBucketItem extends Item {
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
         tooltip.add(new TranslationTextComponent("item.bigbuckets.bigbucket.desc.fluid", getFluid(stack).getDefaultState().getBlockState().getBlock().getNameTextComponent()));
-        tooltip.add(new TranslationTextComponent("item.bigbuckets.bigbucket.desc.capacity", getCapacity(stack)));
-        tooltip.add(new TranslationTextComponent("item.bigbuckets.bigbucket.desc.fullness", getFullness(stack)));
+        tooltip.add(new TranslationTextComponent("item.bigbuckets.bigbucket.desc.capacity", getCapacity(stack)/1000f));
+        tooltip.add(new TranslationTextComponent("item.bigbuckets.bigbucket.desc.fullness", getFullness(stack)/1000f));
     }
 
     @Override
@@ -205,7 +207,7 @@ public class BigBucketItem extends Item {
     @Override
     public void fillItemGroup(ItemGroup itemGroup, NonNullList<ItemStack> itemStacks) {
         ItemStack stack = new ItemStack(this);
-        setCapacity(stack, 16);
+        setCapacity(stack, 16 * FluidAttributes.BUCKET_VOLUME);
         itemStacks.add(stack);
     }
 
@@ -281,8 +283,8 @@ public class BigBucketItem extends Item {
         }
     }
 
-    public boolean canAcceptFluid(ItemStack stack, Fluid fluid) {
-        return getFullness(stack) != getCapacity(stack) && (getFluid(stack) == fluid || getFluid(stack) == Fluids.EMPTY);
+    public boolean canAcceptFluid(ItemStack stack, Fluid fluid, int amount) {
+        return getFullness(stack) + amount <= getCapacity(stack) && (getFluid(stack) == fluid || getFluid(stack) == Fluids.EMPTY);
     }
 
     //Because I'm too cool for datafixers
@@ -291,7 +293,7 @@ public class BigBucketItem extends Item {
         final int oldCapacity = tag.getInt("Capacity");
         final int oldFullness = tag.getInt("Fullness");
 
-        fluidHandler.setTankCapacity(oldCapacity);
+        fluidHandler.setTankCapacity(oldCapacity * FluidAttributes.BUCKET_VOLUME);
 
         if (oldFluid == null) {
             stack.removeChildTag("BigBuckets");

@@ -9,6 +9,7 @@ import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Size2i;
+import net.minecraftforge.fluids.FluidAttributes;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -21,11 +22,11 @@ public class BigBucketUpgradeCategoryExtension implements ICraftingCategoryExten
         List<Ingredient> inputs = new ArrayList<>();
         inputs.add(Ingredient.fromItems(Items.BUCKET));
         ItemStack inputBB = new ItemStack(BigBuckets.BIG_BUCKET_ITEM);
-        BigBuckets.BIG_BUCKET_ITEM.setCapacity(inputBB, 2);
+        BigBuckets.BIG_BUCKET_ITEM.setCapacity(inputBB, 2 * FluidAttributes.BUCKET_VOLUME);
         inputs.add(Ingredient.fromStacks(inputBB));
 
         ItemStack output = new ItemStack(BigBuckets.BIG_BUCKET_ITEM);
-        BigBuckets.BIG_BUCKET_ITEM.setCapacity(output, 3);
+        BigBuckets.BIG_BUCKET_ITEM.setCapacity(output, 3 * FluidAttributes.BUCKET_VOLUME);
 
         ingredients.setInputIngredients(inputs);
         ingredients.setOutput(VanillaTypes.ITEM, output);
