@@ -7,6 +7,7 @@ import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.SpecialRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidAttributes;
 
 public class BigBucketIncreaseCapacityRecipe extends SpecialRecipe {
     public BigBucketIncreaseCapacityRecipe(ResourceLocation idIn) {
@@ -56,7 +57,7 @@ public class BigBucketIncreaseCapacityRecipe extends SpecialRecipe {
             }
         }
 
-        BigBuckets.BIG_BUCKET_ITEM.setCapacity(bigBucketStack, BigBuckets.BIG_BUCKET_ITEM.getCapacity(bigBucketStack) + i);
+        BigBuckets.BIG_BUCKET_ITEM.setCapacity(bigBucketStack, BigBuckets.BIG_BUCKET_ITEM.getCapacity(bigBucketStack) + i * FluidAttributes.BUCKET_VOLUME);
         return bigBucketStack;
     }
 
