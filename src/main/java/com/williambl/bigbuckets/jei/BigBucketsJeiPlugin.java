@@ -38,7 +38,7 @@ public class BigBucketsJeiPlugin implements IModPlugin {
         recipes.add(new BigBucketIncreaseCapacityRecipe(new ResourceLocation(BigBuckets.MODID, "bigbucket_increase_capacity")));
         registration.addRecipes(recipes, VanillaRecipeCategoryUid.CRAFTING);
 
-        registration.addIngredientInfo(new ItemStack(BigBuckets.BIG_BUCKET_ITEM), VanillaTypes.ITEM,
+        registration.addIngredientInfo(new ItemStack(BigBuckets.BIG_BUCKET_ITEM.get()), VanillaTypes.ITEM,
                 "Big Buckets can store more fluid than regular buckets.",
                         "A Big Bucket can be upgraded by placing more buckets with it in a crafting table.");
     }

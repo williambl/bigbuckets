@@ -22,7 +22,7 @@ public class BigBucketIncreaseCapacityRecipe extends SpecialRecipe {
         for (int j = 0; j < inv.getSizeInventory(); ++j) {
             ItemStack stackInSlot = inv.getStackInSlot(j);
             if (!stackInSlot.isEmpty()) {
-                if (stackInSlot.getItem() == BigBuckets.BIG_BUCKET_ITEM) {
+                if (stackInSlot.getItem() == BigBuckets.BIG_BUCKET_ITEM.get()) {
                     if (bigBucketStack.isEmpty())
                         bigBucketStack = stackInSlot;
                     else
@@ -48,7 +48,7 @@ public class BigBucketIncreaseCapacityRecipe extends SpecialRecipe {
         for (int j = 0; j < inv.getSizeInventory(); ++j) {
             ItemStack stackInSlot = inv.getStackInSlot(j);
             if (!stackInSlot.isEmpty()) {
-                if (stackInSlot.getItem() == BigBuckets.BIG_BUCKET_ITEM) {
+                if (stackInSlot.getItem() == BigBuckets.BIG_BUCKET_ITEM.get()) {
                     bigBucketStack = stackInSlot.copy();
                 } else {
                     if (stackInSlot.getItem() == Items.BUCKET)
@@ -57,13 +57,13 @@ public class BigBucketIncreaseCapacityRecipe extends SpecialRecipe {
             }
         }
 
-        BigBuckets.BIG_BUCKET_ITEM.setCapacity(bigBucketStack, BigBuckets.BIG_BUCKET_ITEM.getCapacity(bigBucketStack) + i * FluidAttributes.BUCKET_VOLUME);
+        BigBuckets.BIG_BUCKET_ITEM.get().setCapacity(bigBucketStack, BigBuckets.BIG_BUCKET_ITEM.get().getCapacity(bigBucketStack) + i * FluidAttributes.BUCKET_VOLUME);
         return bigBucketStack;
     }
 
     @Override
     public IRecipeSerializer<?> getSerializer() {
-        return BigBuckets.BIG_BUCKET_INCREASE_CAPACITY_RECIPE_SERIALIZER;
+        return BigBuckets.BIG_BUCKET_INCREASE_CAPACITY_RECIPE_SERIALIZER.get();
     }
 
     /**

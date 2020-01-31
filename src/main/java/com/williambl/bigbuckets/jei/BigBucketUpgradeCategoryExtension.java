@@ -21,12 +21,12 @@ public class BigBucketUpgradeCategoryExtension implements ICraftingCategoryExten
     public void setIngredients(IIngredients ingredients) {
         List<Ingredient> inputs = new ArrayList<>();
         inputs.add(Ingredient.fromItems(Items.BUCKET));
-        ItemStack inputBB = new ItemStack(BigBuckets.BIG_BUCKET_ITEM);
-        BigBuckets.BIG_BUCKET_ITEM.setCapacity(inputBB, 2 * FluidAttributes.BUCKET_VOLUME);
+        ItemStack inputBB = new ItemStack(BigBuckets.BIG_BUCKET_ITEM.get());
+        BigBuckets.BIG_BUCKET_ITEM.get().setCapacity(inputBB, 2 * FluidAttributes.BUCKET_VOLUME);
         inputs.add(Ingredient.fromStacks(inputBB));
 
-        ItemStack output = new ItemStack(BigBuckets.BIG_BUCKET_ITEM);
-        BigBuckets.BIG_BUCKET_ITEM.setCapacity(output, 3 * FluidAttributes.BUCKET_VOLUME);
+        ItemStack output = new ItemStack(BigBuckets.BIG_BUCKET_ITEM.get());
+        BigBuckets.BIG_BUCKET_ITEM.get().setCapacity(output, 3 * FluidAttributes.BUCKET_VOLUME);
 
         ingredients.setInputIngredients(inputs);
         ingredients.setOutput(VanillaTypes.ITEM, output);

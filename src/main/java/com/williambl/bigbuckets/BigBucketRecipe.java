@@ -33,14 +33,14 @@ public class BigBucketRecipe extends SpecialRecipe {
 
    @Override
    public ItemStack getCraftingResult(CraftingInventory inv) {
-      ItemStack stack = new ItemStack(BigBuckets.BIG_BUCKET_ITEM);
-      BigBuckets.BIG_BUCKET_ITEM.setCapacity(stack, 2 * FluidAttributes.BUCKET_VOLUME);
+      ItemStack stack = new ItemStack(BigBuckets.BIG_BUCKET_ITEM.get());
+      BigBuckets.BIG_BUCKET_ITEM.get().setCapacity(stack, 2 * FluidAttributes.BUCKET_VOLUME);
       return stack;
    }
 
    @Override
    public IRecipeSerializer<?> getSerializer() {
-      return BigBuckets.BIG_BUCKET_RECIPE_SERIALIZER;
+      return BigBuckets.BIG_BUCKET_RECIPE_SERIALIZER.get();
    }
 
    /**
