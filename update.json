@@ -1,8 +1,14 @@
 {
   "homepage": "https://minecraft.curseforge.com/projects/bigbuckets",
   "promos": {
+    "1.15.2-latest": "1.1.0",
+    "1.15.2-recommended": "1.1.0",
     "1.14.4-latest": "1.0.0",
     "1.14.4-recommended": "1.0.0"
+  },
+  "1.15.2": {
+    "1.1.0": "",
+    "1.0.1": "\n\nUpdated to 1.15.2.\n\nAdd durability bar showing fullness.\n\nAdd localisation: de_de, el_gr, eo_uy, es_es, fr_fr, it_it, ja_jp, nl_nl, oc_fr, pl_pl, pt_pt.\n\nAdd JEI integration.\n"
   },
   "1.14.4": {
     "1.0.0": "Initial Release"
