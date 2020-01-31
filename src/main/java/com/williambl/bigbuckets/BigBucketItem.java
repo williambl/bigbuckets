@@ -206,9 +206,11 @@ public class BigBucketItem extends Item {
 
     @Override
     public void fillItemGroup(ItemGroup itemGroup, NonNullList<ItemStack> itemStacks) {
-        ItemStack stack = new ItemStack(this);
-        setCapacity(stack, 16 * FluidAttributes.BUCKET_VOLUME);
-        itemStacks.add(stack);
+        if (isInGroup(itemGroup)) {
+            ItemStack stack = new ItemStack(this);
+            setCapacity(stack, 16 * FluidAttributes.BUCKET_VOLUME);
+            itemStacks.add(stack);
+        }
     }
 
     public Fluid getFluid(ItemStack stack) {
