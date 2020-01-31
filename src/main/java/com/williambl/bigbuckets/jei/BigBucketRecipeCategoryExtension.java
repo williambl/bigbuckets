@@ -24,7 +24,7 @@ public class BigBucketRecipeCategoryExtension implements ICraftingCategoryExtens
         inputs.add(Ingredient.fromItems(Items.BUCKET));
 
         ItemStack output = new ItemStack(BigBuckets.BIG_BUCKET_ITEM);
-        output.getOrCreateChildTag("BigBuckets").putInt("Capacity", 2);
+        BigBuckets.BIG_BUCKET_ITEM.setCapacity(output, 2);
 
         ingredients.setInputIngredients(inputs);
         ingredients.setOutput(VanillaTypes.ITEM, output);

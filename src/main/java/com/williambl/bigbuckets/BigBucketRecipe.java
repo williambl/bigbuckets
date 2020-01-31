@@ -33,7 +33,7 @@ public class BigBucketRecipe extends SpecialRecipe {
    @Override
    public ItemStack getCraftingResult(CraftingInventory inv) {
       ItemStack stack = new ItemStack(BigBuckets.BIG_BUCKET_ITEM);
-      stack.getOrCreateChildTag("BigBuckets").putInt("Capacity", 2);
+      BigBuckets.BIG_BUCKET_ITEM.setCapacity(stack, 2);
       return stack;
    }
 

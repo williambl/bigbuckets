@@ -28,8 +28,17 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -40,12 +49,7 @@ public class BigBucketItem extends Item {
     }
 
     protected ItemStack emptyBucket(ItemStack stack, PlayerEntity player) {
-        int fullness = getFullness(stack);
-
-        if (fullness - 1 >= 0)
-            setFullness(stack, fullness - 1);
-        if (fullness - 1 == 0)
-            setFluid(stack, Fluids.EMPTY);
+        drain(stack, 1);
         return stack;
     }
 
@@ -107,14 +111,7 @@ public class BigBucketItem extends Item {
     }
 
     private ItemStack fillBucket(ItemStack stack, PlayerEntity player, Fluid fluid) {
-        int capacity = getCapacity(stack);
-        int fullness = getFullness(stack);
-        if (fullness == 0) {
-            setFluid(stack, fluid);
-        }
-
-        if (fullness + 1 <= capacity)
-            setFullness(stack, fullness + 1);
+        fill(stack, new FluidStack(fluid, 1));
         return stack;
     }
 
@@ -163,6 +160,21 @@ public class BigBucketItem extends Item {
         worldIn.playSound(player, pos, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
     }
 
+    @Nullable
+    @Override
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
+        return new ICapabilityProvider() {
+            @Nonnull
+            @Override
+            public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+
+                return cap == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY ?
+                        (LazyOptional<T>) LazyOptional.of(() -> new BigBucketFluidHandler(stack))
+                        : LazyOptional.empty();
+            }
+        };
+    }
+
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
@@ -198,43 +210,98 @@ public class BigBucketItem extends Item {
     }
 
     public Fluid getFluid(ItemStack stack) {
-        CompoundNBT tag = stack.getOrCreateChildTag("BigBuckets");
+        final LazyOptional<IFluidHandlerItem> cap = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
 
-        if (tag.getString("Fluid").equals(""))
-            return Fluids.EMPTY;
-
-        ResourceLocation loc = new ResourceLocation(tag.getString("Fluid"));
-        return ForgeRegistries.FLUIDS.getValue(loc);
+        if (cap.isPresent()) {
+            final BigBucketFluidHandler fluidHandler = (BigBucketFluidHandler) cap.orElseThrow(NullPointerException::new);
+            if (stack.hasTag() && stack.getTag().contains("BigBuckets")) {
+                // Handling for old-style NBT
+                final CompoundNBT tag = stack.getChildTag("BigBuckets");
+                fixNBT(tag, fluidHandler, stack);
+            }
+            return fluidHandler.getFluid().getFluid();
+        }
+        return Fluids.EMPTY;
     }
 
     public int getCapacity(ItemStack stack) {
-        CompoundNBT tag = stack.getOrCreateChildTag("BigBuckets");
-        return tag.getInt("Capacity");
+        final LazyOptional<IFluidHandlerItem> cap = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+
+        if (cap.isPresent()) {
+            final BigBucketFluidHandler fluidHandler = (BigBucketFluidHandler) cap.orElseThrow(NullPointerException::new);
+            if (stack.hasTag() && stack.getTag().contains("BigBuckets")) {
+                // Handling for old-style NBT
+                final CompoundNBT tag = stack.getChildTag("BigBuckets");
+                fixNBT(tag, fluidHandler, stack);
+            }
+            return fluidHandler.getTankCapacity(0);
+        }
+        return 0;
     }
 
     public int getFullness(ItemStack stack) {
-        CompoundNBT tag = stack.getOrCreateChildTag("BigBuckets");
-        return tag.getInt("Fullness");
-    }
+        final LazyOptional<IFluidHandlerItem> cap = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
 
-    public void setFluid(ItemStack stack, Fluid fluid) {
-        CompoundNBT tag = stack.getOrCreateChildTag("BigBuckets");
-
-        String loc = fluid.getRegistryName().toString();
-        tag.putString("Fluid", loc);
+        if (cap.isPresent()) {
+            final BigBucketFluidHandler fluidHandler = (BigBucketFluidHandler) cap.orElseThrow(NullPointerException::new);
+            if (stack.hasTag() && stack.getTag().contains("BigBuckets")) {
+                // Handling for old-style NBT
+                final CompoundNBT tag = stack.getChildTag("BigBuckets");
+                fixNBT(tag, fluidHandler, stack);
+            }
+            return fluidHandler.getFluid().getAmount();
+        }
+        return 0;
     }
 
     public void setCapacity(ItemStack stack, int capacity) {
-        CompoundNBT tag = stack.getOrCreateChildTag("BigBuckets");
-        tag.putInt("Capacity", capacity);
+        final LazyOptional<IFluidHandlerItem> cap = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+
+        if (cap.isPresent()) {
+            final BigBucketFluidHandler fluidHandler = (BigBucketFluidHandler) cap.orElseThrow(NullPointerException::new);
+            fluidHandler.setTankCapacity(capacity);
+        }
     }
 
-    public void setFullness(ItemStack stack, int fullness) {
-        CompoundNBT tag = stack.getOrCreateChildTag("BigBuckets");
-        tag.putInt("Fullness", fullness);
+    public void fill(ItemStack stack, FluidStack fluidStack) {
+        final LazyOptional<IFluidHandlerItem> cap = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+
+        if (cap.isPresent()) {
+            final BigBucketFluidHandler fluidHandler = (BigBucketFluidHandler) cap.orElseThrow(NullPointerException::new);
+            fluidHandler.fill(fluidStack, IFluidHandler.FluidAction.EXECUTE);
+        }
+    }
+
+    public void drain(ItemStack stack, int drainAmount) {
+        final LazyOptional<IFluidHandlerItem> cap = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+
+        if (cap.isPresent()) {
+            final BigBucketFluidHandler fluidHandler = (BigBucketFluidHandler) cap.orElseThrow(NullPointerException::new);
+            fluidHandler.drain(drainAmount, IFluidHandler.FluidAction.EXECUTE);
+        }
     }
 
     public boolean canAcceptFluid(ItemStack stack, Fluid fluid) {
         return getFullness(stack) != getCapacity(stack) && (getFluid(stack) == fluid || getFluid(stack) == Fluids.EMPTY);
+    }
+
+    //Because I'm too cool for datafixers
+    private void fixNBT(CompoundNBT tag, BigBucketFluidHandler fluidHandler, ItemStack stack) {
+        final Fluid oldFluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(tag.getString("Fluid")));
+        final int oldCapacity = tag.getInt("Capacity");
+        final int oldFullness = tag.getInt("Fullness");
+
+        fluidHandler.setTankCapacity(oldCapacity);
+
+        if (oldFluid == null) {
+            stack.removeChildTag("BigBuckets");
+            return;
+        }
+
+        final FluidStack fluidStack = new FluidStack(oldFluid, oldFullness);
+
+        fluidHandler.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.EXECUTE);
+        fluidHandler.fill(fluidStack, IFluidHandler.FluidAction.EXECUTE);
+        stack.removeChildTag("BigBuckets");
     }
 }
