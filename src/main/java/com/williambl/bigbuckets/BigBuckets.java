@@ -1,12 +1,10 @@
 package com.williambl.bigbuckets;
 
-import com.sun.org.apache.regexp.internal.RE;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
@@ -18,7 +16,6 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ObjectHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,8 +27,8 @@ public class BigBuckets {
 
     public static final String MODID = "bigbuckets";
 
-    private static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, MODID);
-    private static final DeferredRegister<IRecipeSerializer<?>> RECIPE_SERIALIZERS = new DeferredRegister<>(ForgeRegistries.RECIPE_SERIALIZERS, MODID);
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+    private static final DeferredRegister<IRecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MODID);
 
     public static final RegistryObject<BigBucketItem> BIG_BUCKET_ITEM = ITEMS.register("" +
             "bigbucket", () -> new BigBucketItem(new Item.Properties().maxStackSize(1).group(ItemGroup.MISC))
@@ -41,7 +38,7 @@ public class BigBuckets {
             "crafting_special_big_bucket", () -> new SpecialRecipeSerializer<>(BigBucketRecipe::new)
     );
 
-    public static final RegistryObject<SpecialRecipeSerializer<BigBucketIncreaseCapacityRecipe>> BIG_BUCKET_INCREASE_CAPACITY_RECIPE_SERIALIZER  = RECIPE_SERIALIZERS.register("" +
+    public static final RegistryObject<SpecialRecipeSerializer<BigBucketIncreaseCapacityRecipe>> BIG_BUCKET_INCREASE_CAPACITY_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("" +
             "crafting_special_big_bucket_increase_capacity", () -> new SpecialRecipeSerializer<>(BigBucketIncreaseCapacityRecipe::new)
     );
 

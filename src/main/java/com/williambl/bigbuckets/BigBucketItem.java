@@ -114,7 +114,7 @@ public class BigBucketItem extends Item {
                                 && ((ILiquidContainer) blockstate.getBlock()).canContainFluid(world, pos, blockstate, getFluid(stack))
                 )
         ) {
-            if (world.dimension.doesWaterVaporize() && fluid.isIn(FluidTags.WATER)) {
+            if (world.func_230315_m_().func_236040_e_() && fluid.isIn(FluidTags.WATER)) {
                 world.playSound(player, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 2.6F + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.8F);
                 for (int i = 0; i < 8; ++i)
                     world.addParticle(ParticleTypes.LARGE_SMOKE, (double) pos.getX() + world.rand.nextDouble(), (double) pos.getY() + world.rand.nextDouble(), (double) pos.getZ() + Math.random(), 0.0D, 0.0D, 0.0D);
@@ -167,8 +167,8 @@ public class BigBucketItem extends Item {
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
-        tooltip.add(new TranslationTextComponent("item.bigbuckets.bigbucket.desc.fluid", getFluid(stack).getDefaultState().getBlockState().getBlock().getNameTextComponent()));
-        tooltip.add(new TranslationTextComponent("item.bigbuckets.bigbucket.desc.capacity", getCapacity(stack)/1000f));
+        tooltip.add(new TranslationTextComponent("item.bigbuckets.bigbucket.desc.fluid", getFluid(stack).getDefaultState().getBlockState().getBlock().func_235333_g_()));
+        tooltip.add(new TranslationTextComponent("item.bigbuckets.bigbucket.desc.capacity", getCapacity(stack) / 1000f));
         tooltip.add(new TranslationTextComponent("item.bigbuckets.bigbucket.desc.fullness", getFullness(stack)/1000f));
     }
 
@@ -177,7 +177,7 @@ public class BigBucketItem extends Item {
     public ITextComponent getDisplayName(ItemStack stack) {
         if (getFluid(stack) == Fluids.EMPTY)
             return super.getDisplayName(stack);
-        return super.getDisplayName(stack).appendSibling(new StringTextComponent(" (").appendSibling(getFluid(stack).getDefaultState().getBlockState().getBlock().getNameTextComponent()).appendSibling(new StringTextComponent(")")));
+        return super.getDisplayName(stack).func_230532_e_().func_230529_a_(new StringTextComponent(" (").func_230532_e_().func_230529_a_(getFluid(stack).getDefaultState().getBlockState().getBlock().func_235333_g_()).func_230529_a_(new StringTextComponent(")")));
     }
 
     @Override
