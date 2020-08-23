@@ -53,17 +53,16 @@ public class BigBucketItem extends Item {
     @Nonnull
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
-        RayTraceResult raytraceresult = rayTrace(world, player, getFullness(stack) == getCapacity(stack) ? RayTraceContext.FluidMode.NONE : RayTraceContext.FluidMode.SOURCE_ONLY);
+        BlockRayTraceResult raytraceresult = rayTrace(world, player, getFullness(stack) == getCapacity(stack) ? RayTraceContext.FluidMode.NONE : RayTraceContext.FluidMode.SOURCE_ONLY);
 
         if (raytraceresult.getType() != RayTraceResult.Type.BLOCK)
             return new ActionResult<>(ActionResultType.PASS, stack);
 
-        BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult) raytraceresult;
-        BlockPos blockPos = blockraytraceresult.getPos();
+        BlockPos blockPos = raytraceresult.getPos();
 
         if (
                 world.isBlockModifiable(player, blockPos)
-                        && player.canPlayerEdit(blockPos, blockraytraceresult.getFace(), stack)
+                        && player.canPlayerEdit(blockPos, raytraceresult.getFace(), stack)
         ) {
             BlockState blockState = world.getBlockState(blockPos);
 
@@ -74,9 +73,9 @@ public class BigBucketItem extends Item {
                     blockState.getBlock() instanceof ILiquidContainer
                             && ((ILiquidContainer) blockState.getBlock()).canContainFluid(world, blockPos, blockState, getFluid(stack)) ?
                             blockPos
-                            : blockraytraceresult.getPos().offset(blockraytraceresult.getFace());
+                            : raytraceresult.getPos().offset(raytraceresult.getFace());
 
-            if (tryEmpty(player, world, fluidPos, blockraytraceresult, stack))
+            if (tryEmpty(player, world, fluidPos, raytraceresult, stack))
                 return new ActionResult<>(ActionResultType.SUCCESS, stack);
         }
         return new ActionResult<>(ActionResultType.FAIL, stack);
@@ -105,7 +104,7 @@ public class BigBucketItem extends Item {
 
         Fluid fluid = getFluid(stack);
         BlockState blockstate = world.getBlockState(pos);
-        boolean isBlockReplaceable = blockstate.isReplaceable(fluid) || raytrace == null || (blockstate.isSolidSide(world, pos, raytrace.getFace()));
+        boolean isBlockReplaceable = blockstate.canBucketPlace(fluid) || raytrace == null;
         if (
                 world.isAirBlock(pos)
                         || isBlockReplaceable
@@ -114,7 +113,7 @@ public class BigBucketItem extends Item {
                                 && ((ILiquidContainer) blockstate.getBlock()).canContainFluid(world, pos, blockstate, getFluid(stack))
                 )
         ) {
-            if (world.func_230315_m_().func_236040_e_() && fluid.isIn(FluidTags.WATER)) {
+            if (world.getDimension().isUltrawarm() && fluid.isIn(FluidTags.WATER)) {
                 world.playSound(player, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 2.6F + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.8F);
                 for (int i = 0; i < 8; ++i)
                     world.addParticle(ParticleTypes.LARGE_SMOKE, (double) pos.getX() + world.rand.nextDouble(), (double) pos.getY() + world.rand.nextDouble(), (double) pos.getZ() + Math.random(), 0.0D, 0.0D, 0.0D);
@@ -167,7 +166,7 @@ public class BigBucketItem extends Item {
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
-        tooltip.add(new TranslationTextComponent("item.bigbuckets.bigbucket.desc.fluid", getFluid(stack).getDefaultState().getBlockState().getBlock().func_235333_g_()));
+        tooltip.add(new TranslationTextComponent("item.bigbuckets.bigbucket.desc.fluid", getFluid(stack).getDefaultState().getBlockState().getBlock().getName()));
         tooltip.add(new TranslationTextComponent("item.bigbuckets.bigbucket.desc.capacity", getCapacity(stack) / 1000f));
         tooltip.add(new TranslationTextComponent("item.bigbuckets.bigbucket.desc.fullness", getFullness(stack)/1000f));
     }
@@ -177,7 +176,7 @@ public class BigBucketItem extends Item {
     public ITextComponent getDisplayName(ItemStack stack) {
         if (getFluid(stack) == Fluids.EMPTY)
             return super.getDisplayName(stack);
-        return super.getDisplayName(stack).func_230532_e_().func_230529_a_(new StringTextComponent(" (").func_230532_e_().func_230529_a_(getFluid(stack).getDefaultState().getBlockState().getBlock().func_235333_g_()).func_230529_a_(new StringTextComponent(")")));
+        return super.getDisplayName(stack).shallowCopy().append(new StringTextComponent(" (").append(getFluid(stack).getDefaultState().getBlockState().getBlock().getName()).append(new StringTextComponent(")")));
     }
 
     @Override
