@@ -106,7 +106,6 @@ public class BigBucketItem extends Item {
             LazyOptional<IFluidHandler> handler = be == null ? LazyOptional.empty() : be.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, raytrace.getFace());
             if (handler.isPresent()) {
                 FluidStack fStack = FluidUtil.tryFluidTransfer(FluidUtil.getFluidHandler(stack).orElseThrow(NullPointerException::new), handler.orElseThrow(NullPointerException::new), getCapacity(stack) - getFullness(stack), true);
-                System.out.println(fStack.getAmount());
                 fill(stack, fStack);
                 return fStack.getAmount() > 0;
             }
@@ -154,7 +153,6 @@ public class BigBucketItem extends Item {
             } else if (handler.isPresent()) {
                 playEmptySound(player, world, pos, stack);
                 int amount = FluidUtil.tryFluidTransfer(handler.orElseThrow(NullPointerException::new), FluidUtil.getFluidHandler(stack).orElseThrow(NullPointerException::new), Integer.MAX_VALUE, true).getAmount();
-                System.out.println(amount);
                 drain(stack, amount);
             } else if (getFullness(stack) >= 1) {
                 if (!world.isRemote && blockstate.canBucketPlace(fluid) && !blockstate.getMaterial().isLiquid())
