@@ -147,22 +147,6 @@ public class BigBucketItem extends Item {
         worldIn.playSound(player, pos, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
     }
 
-    @Nullable
-    @Override
-    @SuppressWarnings("unchecked")
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
-        return new ICapabilityProvider() {
-            @Nonnull
-            @Override
-            public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-
-                return cap == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY ?
-                        (LazyOptional<T>) LazyOptional.of(() -> new BigBucketFluidHandler(stack))
-                        : LazyOptional.empty();
-            }
-        };
-    }
-
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
@@ -180,18 +164,6 @@ public class BigBucketItem extends Item {
     }
 
     @Override
-    public boolean showDurabilityBar(ItemStack stack) {
-        return getCapacity(stack) > 0;
-    }
-
-    @Override
-    public double getDurabilityForDisplay(ItemStack stack) {
-        double fullness = getFullness(stack);
-        double capacity = getCapacity(stack);
-        return fullness == capacity ? 0.0 : (capacity-fullness)/capacity;
-    }
-
-    @Override
     public void fillItemGroup(ItemGroup itemGroup, NonNullList<ItemStack> itemStacks) {
         if (isInGroup(itemGroup)) {
             ItemStack stack = new ItemStack(this);
@@ -200,7 +172,16 @@ public class BigBucketItem extends Item {
         }
     }
 
+    public boolean canAcceptFluid(ItemStack stack, Fluid fluid, int amount) {
+        return getFullness(stack) + amount <= getCapacity(stack) && (getFluid(stack) == fluid || getFluid(stack) == Fluids.EMPTY);
+    }
+
+    /*
+     * PLATFORM DEPENDENT CODE
+     */
+
     @SuppressWarnings("ConstantConditions")
+    @PlatformDependent
     public Fluid getFluid(ItemStack stack) {
         final LazyOptional<IFluidHandlerItem> cap = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
 
@@ -217,6 +198,7 @@ public class BigBucketItem extends Item {
     }
 
     @SuppressWarnings("ConstantConditions")
+    @PlatformDependent
     public int getCapacity(ItemStack stack) {
         final LazyOptional<IFluidHandlerItem> cap = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
 
@@ -233,6 +215,7 @@ public class BigBucketItem extends Item {
     }
 
     @SuppressWarnings("ConstantConditions")
+    @PlatformDependent
     public int getFullness(ItemStack stack) {
         final LazyOptional<IFluidHandlerItem> cap = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
 
@@ -248,6 +231,7 @@ public class BigBucketItem extends Item {
         return 0;
     }
 
+    @PlatformDependent
     public void setCapacity(ItemStack stack, int capacity) {
         final LazyOptional<IFluidHandlerItem> cap = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
 
@@ -257,6 +241,7 @@ public class BigBucketItem extends Item {
         }
     }
 
+    @PlatformDependent
     public void fill(ItemStack stack, FluidStack fluidStack) {
         final LazyOptional<IFluidHandlerItem> cap = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
 
@@ -266,6 +251,7 @@ public class BigBucketItem extends Item {
         }
     }
 
+    @PlatformDependent
     public void drain(ItemStack stack, int drainAmount) {
         final LazyOptional<IFluidHandlerItem> cap = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
 
@@ -275,11 +261,44 @@ public class BigBucketItem extends Item {
         }
     }
 
-    public boolean canAcceptFluid(ItemStack stack, Fluid fluid, int amount) {
-        return getFullness(stack) + amount <= getCapacity(stack) && (getFluid(stack) == fluid || getFluid(stack) == Fluids.EMPTY);
+
+    /*
+     * FORGE SPECIFIC START
+     */
+
+    @Nullable
+    @Override
+    @SuppressWarnings("unchecked")
+    @PlatformDependent
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
+        return new ICapabilityProvider() {
+            @Nonnull
+            @Override
+            public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+
+                return cap == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY ?
+                        (LazyOptional<T>) LazyOptional.of(() -> new BigBucketFluidHandler(stack))
+                        : LazyOptional.empty();
+            }
+        };
+    }
+
+    @Override
+    @PlatformDependent
+    public boolean showDurabilityBar(ItemStack stack) {
+        return getCapacity(stack) > 0;
+    }
+
+    @Override
+    @PlatformDependent
+    public double getDurabilityForDisplay(ItemStack stack) {
+        double fullness = getFullness(stack);
+        double capacity = getCapacity(stack);
+        return fullness == capacity ? 0.0 : (capacity-fullness)/capacity;
     }
 
     //Because I'm too cool for datafixers
+    @PlatformDependent
     private void fixNBT(CompoundNBT tag, BigBucketFluidHandler fluidHandler, ItemStack stack) {
         final Fluid oldFluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(tag.getString("Fluid")));
         final int oldCapacity = tag.getInt("Capacity");
