@@ -4,30 +4,30 @@ loaderVersion = "[35,)"
 license = "Insert License Here"
 
 [[mods]]
-modId = "examplemod"
+modId = "bigbuckets"
 version = "${version}"
-displayName = "Example Mod"
-authors = "Me!"
+displayName = "Big Buckets"
+authors = "Will BL"
 description = '''
-This is an example description! Tell everyone what your mod is about!
+Adds upgradable buckets, compatible with all your favourite fluid-based mods
 '''
-#logoFile = ""
+logoFile = "assets/bigbuckets/icon.png"
 
-[[dependencies.examplemod]]
+[[dependencies.bigbuckets]]
 modId = "forge"
 mandatory = true
 versionRange = "[35,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.examplemod]]
+[[dependencies.bigbuckets]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[1.16.2,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.examplemod]]
+[[dependencies.bigbuckets]]
 modId = "architectury"
 mandatory = true
 versionRange = "[1.1.55,)"
