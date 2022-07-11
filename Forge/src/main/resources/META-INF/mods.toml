@@ -1,0 +1,26 @@
+modLoader="javafml"
+loaderVersion="[41,)"
+license="MIT"
+[[mods]]
+modId="bigbuckets"
+version="${file.jarVersion}"
+displayName="Big Buckets"
+#updateJSONURL="https://change.me.example.invalid/updates.json"
+#displayURL="https://change.me.to.your.mods.homepage.example.invalid/"
+logoFile="assets/bigbuckets/icon.png"
+credits=""
+authors="Will BL"
+description='''
+'''
+[[dependencies.bigbuckets]]
+    modId="forge"
+    mandatory=true
+    versionRange="[41,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.bigbuckets]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.19,1.20)"
+    ordering="NONE"
+    side="BOTH"
