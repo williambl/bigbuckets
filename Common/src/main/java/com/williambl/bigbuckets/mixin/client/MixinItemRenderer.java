@@ -55,11 +55,12 @@ public abstract class MixinItemRenderer {
 
                 RenderSystem.enableTexture();
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-                RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
 
                 var fluidRenderer = ClientServices.FLUIDS;
 
                 TextureAtlasSprite sprite = fluidRenderer.getSprite(data.fluid(), data.data().orElse(null));
+                RenderSystem.setShaderTexture(0, sprite.atlas().location());
+
                 int color = fluidRenderer.getColor(data.fluid(), data.data().orElse(null));
 
                 this.fillRectWithTexture(builder, x + 2, y + 13, durability, 1, sprite.getU0(), sprite.getV0(), sprite.getU(durability), sprite.getV(1.0), color);
