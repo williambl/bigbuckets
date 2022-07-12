@@ -101,9 +101,9 @@ processResources {
 }
 
 mixin {
-    add sourceSets.main, 'bigbuckets.mixins.refmap.json'
-    config 'bigbuckets_common.mixins.json'
-    config 'bigbuckets_forge.mixins.json'
+    add sourceSets.main, "${archivesBaseName}-refmap.json"
+    config "${mod_id}_common.mixins.json"
+    config "${mod_id}_forge.mixins.json"
 
     debug.verbose = true
     debug.export = true
@@ -123,7 +123,12 @@ publishing {
     }
     repositories {
         maven {
-            url "file://" + System.getenv("local_maven")
+            name = "willBlRepositoryReleases"
+            url = "https://maven.willbl.dev/releases"
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
         }
     }
 }
