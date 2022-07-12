@@ -1,0 +1,6 @@
+{
+  "item.bigbuckets.big_bucket": "Balde Grande",
+  "item.bigbuckets.big_bucket.desc.fluid": "Fluido: %s",
+  "item.bigbuckets.big_bucket.desc.capacity": "Capacidade: %d",
+  "item.bigbuckets.big_bucket.desc.fullness": "Plenitude: %d"
+}

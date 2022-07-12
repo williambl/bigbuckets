@@ -1,0 +1,6 @@
+{
+  "item.bigbuckets.big_bucket": "Ferrat Granda",
+  "item.bigbuckets.big_bucket.desc.fluid": "Fluid: %s",
+  "item.bigbuckets.big_bucket.desc.capacity": "Capacitat: %d",
+  "item.bigbuckets.big_bucket.desc.fullness": "Plenitude: %d"
+}

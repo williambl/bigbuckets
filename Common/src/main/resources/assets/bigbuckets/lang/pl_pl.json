@@ -1,0 +1,6 @@
+{
+  "item.bigbuckets.big_bucket": "Duże Wiadro",
+  "item.bigbuckets.big_bucket.desc.fluid": "Płyn: %s",
+  "item.bigbuckets.big_bucket.desc.capacity": "Pojemność: %d",
+  "item.bigbuckets.big_bucket.desc.fullness": "Pełnia: %d"
+}

@@ -1,0 +1,6 @@
+{
+  "item.bigbuckets.big_bucket": "Cubo Grande",
+  "item.bigbuckets.big_bucket.desc.fluid": "Fluido: %s",
+  "item.bigbuckets.big_bucket.desc.capacity": "Capacidad: %d",
+  "item.bigbuckets.big_bucket.desc.fullness": "Plenitud: %d"
+}

@@ -1,0 +1,6 @@
+{
+  "item.bigbuckets.big_bucket": "Big Bucket",
+  "item.bigbuckets.big_bucket.desc.empty": "Empty",
+  "item.bigbuckets.big_bucket.desc.fullness_and_capacity": "%d / %d B",
+  "item.bigbuckets.big_bucket.desc.capacity": "Capacity: %d B"
+}
