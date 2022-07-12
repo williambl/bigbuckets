@@ -5,17 +5,18 @@ license="MIT"
 modId="bigbuckets"
 version="${file.jarVersion}"
 displayName="Big Buckets"
-#updateJSONURL="https://change.me.example.invalid/updates.json"
-#displayURL="https://change.me.to.your.mods.homepage.example.invalid/"
+updateJSONURL="https://raw.githubusercontent.com/williambl/bigbuckets/master/update.json"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/bigbuckets"
 logoFile="assets/bigbuckets/icon.png"
 credits=""
 authors="Will BL"
 description='''
+This mod adds an upgradable bucket. It can store any fluid, and stores more than the regular bucket can.
 '''
 [[dependencies.bigbuckets]]
     modId="forge"
     mandatory=true
-    versionRange="[41,)"
+    versionRange="[41.0.94,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.bigbuckets]]

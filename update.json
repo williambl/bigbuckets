@@ -1,10 +1,14 @@
 {
   "homepage": "https://minecraft.curseforge.com/projects/bigbuckets",
   "promos": {
+    "1.19-latest": "3.0.0",
     "1.15.2-latest": "1.1.0",
     "1.15.2-recommended": "1.1.0",
     "1.14.4-latest": "1.0.0",
     "1.14.4-recommended": "1.0.0"
+  },
+  "1.19": {
+    "3.0.0": "Big rewrite + update to 1.19."
   },
   "1.15.2": {
     "1.1.0": "",
