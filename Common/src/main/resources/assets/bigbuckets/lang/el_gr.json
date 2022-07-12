@@ -1,6 +1,6 @@
 {
   "item.bigbuckets.big_bucket": "Μεγάλος κουβάς",
-  "item.bigbuckets.bigbucket.desc.fluid": "Υγρό: %s",
-  "item.bigbuckets.bigbucket.desc.capacity": "Χωρητικότητα: %d",
-  "item.bigbuckets.bigbucket.desc.fullness": "Πληρότητα: %d"
+  "item.bigbuckets.big_bucket.desc.fluid": "Υγρό: %s",
+  "item.bigbuckets.big_bucket.desc.capacity": "Χωρητικότητα: %d",
+  "item.bigbuckets.big_bucket.desc.fullness": "Πληρότητα: %d"
 }

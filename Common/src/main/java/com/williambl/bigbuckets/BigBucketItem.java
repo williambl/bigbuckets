@@ -159,9 +159,9 @@ public abstract class BigBucketItem extends Item implements DispensibleContainer
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        tooltip.add(Component.translatable("item.bigbuckets.bigbucket.desc.fluid", this.getFluid(stack).defaultFluidState().createLegacyBlock().getBlock().getName()));
-        tooltip.add(Component.translatable("item.bigbuckets.bigbucket.desc.capacity", this.getCapacity(stack) / (float) Services.FLUIDS.bucketVolume()));
-        tooltip.add(Component.translatable("item.bigbuckets.bigbucket.desc.fullness", this.getFullness(stack) / (float) Services.FLUIDS.bucketVolume()));
+        tooltip.add(Component.translatable("item.bigbuckets.big_bucket.desc.fluid", this.getFluid(stack).defaultFluidState().createLegacyBlock().getBlock().getName()));
+        tooltip.add(Component.translatable("item.bigbuckets.big_bucket.desc.capacity", this.getCapacity(stack) / (float) Services.FLUIDS.bucketVolume()));
+        tooltip.add(Component.translatable("item.bigbuckets.big_bucket.desc.fullness", this.getFullness(stack) / (float) Services.FLUIDS.bucketVolume()));
     }
 
     @Override

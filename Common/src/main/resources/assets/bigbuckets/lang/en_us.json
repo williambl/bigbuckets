@@ -1,6 +1,6 @@
 {
   "item.bigbuckets.big_bucket": "Big Bucket",
-  "item.bigbuckets.bigbucket.desc.fluid": "Fluid: %s",
-  "item.bigbuckets.bigbucket.desc.capacity": "Capacity: %d",
-  "item.bigbuckets.bigbucket.desc.fullness": "Fullness: %d"
+  "item.bigbuckets.big_bucket.desc.fluid": "Fluid: %s",
+  "item.bigbuckets.big_bucket.desc.capacity": "Capacity: %d",
+  "item.bigbuckets.big_bucket.desc.fullness": "Fullness: %d"
 }

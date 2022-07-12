@@ -1,6 +1,6 @@
 {
   "item.bigbuckets.big_bucket": "Grote Emmer",
-  "item.bigbuckets.bigbucket.desc.fluid": "Vloeistof: %s",
-  "item.bigbuckets.bigbucket.desc.capacity": "Capaciteit: %d",
-  "item.bigbuckets.bigbucket.desc.fullness": "Volheid: %d"
+  "item.bigbuckets.big_bucket.desc.fluid": "Vloeistof: %s",
+  "item.bigbuckets.big_bucket.desc.capacity": "Capaciteit: %d",
+  "item.bigbuckets.big_bucket.desc.fullness": "Volheid: %d"
 }
