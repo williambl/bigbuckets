@@ -190,18 +190,30 @@ public abstract class BigBucketItem extends Item implements DispensibleContainer
     }
 
     public boolean canAcceptFluid(ItemStack stack, Fluid fluid, int amount) {
-        return this.getFullness(stack) + amount <= this.getCapacity(stack) && (this.getFluid(stack) == fluid || this.getFluid(stack) == Fluids.EMPTY);
+        return this.getFullness(stack) + amount <= this.getCapacity(stack) && this.canAcceptFluid(stack, fluid);
+    }
+
+    public boolean canAcceptFluid(ItemStack stack, Fluid fluid) {
+        return (this.getFluid(stack) == fluid || this.getFluid(stack) == Fluids.EMPTY);
+    }
+
+    public Fluid getFluid(ItemStack stack) {
+        return this.getBucketStorageData(stack).fluid();
+    }
+
+    public int getCapacity(ItemStack stack) {
+        return this.getBucketStorageData(stack).capacity();
+    }
+
+    public int getFullness(ItemStack stack) {
+        return this.getBucketStorageData(stack).fullness();
     }
 
     /*
      * PLATFORM DEPENDENT CODE
      */
 
-    public abstract Fluid getFluid(ItemStack stack);
-
-    public abstract int getCapacity(ItemStack stack);
-
-    public abstract int getFullness(ItemStack stack);
+    public abstract BucketStorageData getBucketStorageData(ItemStack stack);
 
     public abstract void setCapacity(ItemStack stack, int capacity);
 
