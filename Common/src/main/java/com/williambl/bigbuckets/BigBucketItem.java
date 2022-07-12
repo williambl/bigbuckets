@@ -241,4 +241,8 @@ public abstract class BigBucketItem extends Item implements DispensibleContainer
 
         return amount;
     }
+
+    public boolean shouldShowBar(ItemStack stack) {
+        return !this.getFluid(stack).isSame(Fluids.EMPTY);
+    }
 }

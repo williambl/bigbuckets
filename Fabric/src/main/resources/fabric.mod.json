@@ -23,7 +23,8 @@
       ]
     },
     "mixins": [
-      "bigbuckets.mixins.json"
+      "bigbuckets_fabric.mixins.json",
+      "bigbuckets_common.mixins.json"
     ],
   
     "depends": {
