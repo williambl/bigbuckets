@@ -63,7 +63,7 @@ public class FabricBigBucketItem extends BigBucketItem implements CustomDurabili
 
             var stack = context.getItemVariant().toStack();
             if (BigBucketsMod.BIG_BUCKET_ITEM.canAcceptFluid(stack, resource.getFluid())) {
-                var amount = BigBucketsMod.BIG_BUCKET_ITEM.fill(stack, resource.getFluid(), (int) maxAmount);
+                var amount = BigBucketsMod.BIG_BUCKET_ITEM.fill(stack, resource.getFluid(), convertToInt(maxAmount));
                 ItemVariant newVariant = ItemVariant.of(stack);
                 if (context.exchange(newVariant, 1, transaction) == 1) {
                     return amount;
@@ -81,7 +81,7 @@ public class FabricBigBucketItem extends BigBucketItem implements CustomDurabili
 
             var stack = context.getItemVariant().toStack();
             if (BigBucketsMod.BIG_BUCKET_ITEM.getFluid(stack).isSame(resource.getFluid())) {
-                var amount = BigBucketsMod.BIG_BUCKET_ITEM.drain(stack, (int) maxAmount);
+                var amount = BigBucketsMod.BIG_BUCKET_ITEM.drain(stack, convertToInt(maxAmount));
                 ItemVariant newVariant = ItemVariant.of(stack);
                 if (context.exchange(newVariant, 1, transaction) == 1) {
                     return amount;
@@ -109,6 +109,18 @@ public class FabricBigBucketItem extends BigBucketItem implements CustomDurabili
         @Override
         public long getCapacity() {
             return BigBucketsMod.BIG_BUCKET_ITEM.getCapacity(context.getItemVariant().toStack());
+        }
+
+        private static int convertToInt(long value) {
+            if (value >= Integer.MAX_VALUE) {
+                return Integer.MAX_VALUE;
+            }
+
+            if (value <= Integer.MIN_VALUE) {
+                return Integer.MIN_VALUE;
+            }
+
+            return (int) value;
         }
     }
 }
