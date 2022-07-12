@@ -1,5 +1,5 @@
 {
-  "item.bigbuckets.bigbucket": "Büyük Kova",
+  "item.bigbuckets.big_bucket": "Büyük Kova",
   "item.bigbuckets.bigbucket.desc.fluid": "Sıvı: %s",
   "item.bigbuckets.bigbucket.desc.capacity": "Kapasite: %d",
   "item.bigbuckets.bigbucket.desc.fullness": "Doluluk: %d"

@@ -1,5 +1,5 @@
 {
-  "item.bigbuckets.bigbucket": "Grote Emmer",
+  "item.bigbuckets.big_bucket": "Grote Emmer",
   "item.bigbuckets.bigbucket.desc.fluid": "Vloeistof: %s",
   "item.bigbuckets.bigbucket.desc.capacity": "Capaciteit: %d",
   "item.bigbuckets.bigbucket.desc.fullness": "Volheid: %d"

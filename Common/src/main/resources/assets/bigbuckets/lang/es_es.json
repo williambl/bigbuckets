@@ -1,5 +1,5 @@
 {
-  "item.bigbuckets.bigbucket": "Cubo Grande",
+  "item.bigbuckets.big_bucket": "Cubo Grande",
   "item.bigbuckets.bigbucket.desc.fluid": "Fluido: %s",
   "item.bigbuckets.bigbucket.desc.capacity": "Capacidad: %d",
   "item.bigbuckets.bigbucket.desc.fullness": "Plenitud: %d"

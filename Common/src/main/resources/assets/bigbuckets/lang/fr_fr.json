@@ -1,5 +1,5 @@
 {
-  "item.bigbuckets.bigbucket": "Grand Seau",
+  "item.bigbuckets.big_bucket": "Grand Seau",
   "item.bigbuckets.bigbucket.desc.fluid": "Fluide: %s",
   "item.bigbuckets.bigbucket.desc.capacity": "Capacité: %d",
   "item.bigbuckets.bigbucket.desc.fullness": "Plénitude: %d"

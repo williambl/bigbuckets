@@ -1,5 +1,5 @@
 {
-  "item.bigbuckets.bigbucket": "Μεγάλος κουβάς",
+  "item.bigbuckets.big_bucket": "Μεγάλος κουβάς",
   "item.bigbuckets.bigbucket.desc.fluid": "Υγρό: %s",
   "item.bigbuckets.bigbucket.desc.capacity": "Χωρητικότητα: %d",
   "item.bigbuckets.bigbucket.desc.fullness": "Πληρότητα: %d"
