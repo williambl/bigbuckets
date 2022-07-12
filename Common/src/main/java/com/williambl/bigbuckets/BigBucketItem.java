@@ -3,25 +3,29 @@ package com.williambl.bigbuckets;
 import com.williambl.bigbuckets.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BucketPickup;
+import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +34,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 @ParametersAreNonnullByDefault
-public abstract class BigBucketItem extends Item {
+public abstract class BigBucketItem extends Item implements DispensibleContainerItem {
 
     public BigBucketItem(Properties builder) {
         super(builder);
@@ -53,23 +57,96 @@ public abstract class BigBucketItem extends Item {
         ) {
             BlockState blockState = world.getBlockState(blockPos);
 
-            if (this.tryFill(stack, blockState, world, blockPos, player, raytraceresult))
+            var fillRes = this.tryFill(stack, blockState, world, blockPos, player, raytraceresult);
+            if (fillRes.getResult().consumesAction()) {
                 return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+            }
 
-            if (this.tryEmpty(player, world, blockPos, raytraceresult, stack))
+            var emptyRes = this.tryDrain(player, world, blockPos, raytraceresult, stack);
+            if (emptyRes.getResult().consumesAction()) {
                 return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+            }
         }
         return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
     }
 
-    private boolean tryFill(ItemStack stack, BlockState blockstate, Level world, BlockPos pos, Player player, BlockHitResult raytrace) {
-        //TODO
-        return false;
+    private InteractionResultHolder<ItemStack> tryFill(ItemStack stack, BlockState blockstate, Level level, BlockPos pos, Player player, BlockHitResult raytrace) {
+        if (blockstate.getBlock() instanceof BucketPickup bucketPickup) {
+            ItemStack filledBucket = bucketPickup.pickupBlock(level, pos, blockstate);
+            if (!filledBucket.isEmpty()) {
+                player.awardStat(Stats.ITEM_USED.get(this));
+
+                bucketPickup.getPickupSound().ifPresent((sound) -> {
+                    player.playSound(sound, 1.0F, 1.0F);
+                });
+
+                level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
+
+                var fluid = this.getFluidFromOtherItemStack(filledBucket);
+
+                if (!this.canAcceptFluid(stack, fluid, Services.FLUIDS.bucketVolume()) && filledBucket.getItem() instanceof DispensibleContainerItem containerItem) {
+                    containerItem.emptyContents(player, level, pos, raytrace);
+                    return InteractionResultHolder.fail(stack);
+                }
+
+                this.fill(stack, fluid, Services.FLUIDS.bucketVolume());
+                return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+            }
+        }
+
+        return InteractionResultHolder.pass(stack);
     }
 
-    public boolean tryEmpty(Player player, Level world, BlockPos pos, @Nullable BlockHitResult raytrace, ItemStack stack) {
-        //TODO
-        return false;
+    public InteractionResultHolder<ItemStack> tryDrain(Player player, Level level, BlockPos pos, @Nullable BlockHitResult raytrace, ItemStack stack) {
+        var content = this.getFluid(stack);
+        if (!(content instanceof FlowingFluid)) {
+            return InteractionResultHolder.fail(stack);
+        } else {
+            BlockState state = level.getBlockState(pos);
+            Block block = state.getBlock();
+            Material material = state.getMaterial();
+            boolean canBeReplaced = state.canBeReplaced(content);
+            boolean canPlace = state.isAir() || canBeReplaced || block instanceof LiquidBlockContainer && ((LiquidBlockContainer)block).canPlaceLiquid(level, pos, state, content);
+            if (!canPlace) {
+                return raytrace != null ? this.tryDrain(player, level, raytrace.getBlockPos().relative(raytrace.getDirection()), null, stack) : InteractionResultHolder.fail(stack);
+            } else if (level.dimensionType().ultraWarm() && content.is(FluidTags.WATER)) {
+                int x = pos.getX();
+                int y = pos.getY();
+                int z = pos.getZ();
+                level.playSound(player, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (level.random.nextFloat() - level.random.nextFloat()) * 0.8F);
+
+                for(int i = 0; i < 8; ++i) {
+                    level.addParticle(
+                            ParticleTypes.LARGE_SMOKE, (double)x + Math.random(), (double)y + Math.random(), (double)z + Math.random(), 0.0, 0.0, 0.0
+                    );
+                }
+
+                this.drain(stack, Services.FLUIDS.bucketVolume());
+                return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+            } else if (block instanceof LiquidBlockContainer && content == Fluids.WATER) {
+                ((LiquidBlockContainer)block).placeLiquid(level, pos, state, ((FlowingFluid)content).getSource(false));
+                this.playEmptySound(player, level, pos, stack);
+                this.drain(stack, Services.FLUIDS.bucketVolume());
+                return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+            } else {
+                if (!level.isClientSide && canBeReplaced && !material.isLiquid()) {
+                    level.destroyBlock(pos, true);
+                }
+
+                if (!level.setBlock(pos, content.defaultFluidState().createLegacyBlock(), 11) && !state.getFluidState().isSource()) {
+                    return InteractionResultHolder.fail(stack);
+                } else {
+                    this.playEmptySound(player, level, pos, stack);
+                    this.drain(stack, Services.FLUIDS.bucketVolume());
+                    return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean emptyContents(@Nullable Player var1, Level var2, BlockPos var3, @Nullable BlockHitResult var4) {
+        return false; // Can't do much without an itemstack
     }
 
     protected void playEmptySound(@Nullable Player player, Level worldIn, BlockPos pos, ItemStack stack) {
@@ -83,8 +160,8 @@ public abstract class BigBucketItem extends Item {
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
         tooltip.add(Component.translatable("item.bigbuckets.bigbucket.desc.fluid", this.getFluid(stack).defaultFluidState().createLegacyBlock().getBlock().getName()));
-        tooltip.add(Component.translatable("item.bigbuckets.bigbucket.desc.capacity", this.getCapacity(stack) / 1000f));
-        tooltip.add(Component.translatable("item.bigbuckets.bigbucket.desc.fullness", this.getFullness(stack)/1000f));
+        tooltip.add(Component.translatable("item.bigbuckets.bigbucket.desc.capacity", this.getCapacity(stack) / (float) Services.FLUIDS.bucketVolume()));
+        tooltip.add(Component.translatable("item.bigbuckets.bigbucket.desc.fullness", this.getFullness(stack) / (float) Services.FLUIDS.bucketVolume()));
     }
 
     @Override
@@ -102,6 +179,14 @@ public abstract class BigBucketItem extends Item {
             this.setCapacity(stack, 16 * Services.FLUIDS.bucketVolume());
             itemStacks.add(stack);
         }
+    }
+
+    private Fluid getFluidFromOtherItemStack(ItemStack stack) {
+        if (stack.getItem() instanceof BucketItem bucket) {
+            return Services.FLUIDS.getFluidFromBucketItem(bucket);
+        }
+
+        return Fluids.EMPTY;
     }
 
     public boolean canAcceptFluid(ItemStack stack, Fluid fluid, int amount) {
