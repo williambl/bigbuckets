@@ -2,6 +2,7 @@ package com.williambl.bigbuckets;
 
 import com.mojang.datafixers.util.Pair;
 import com.williambl.bigbuckets.platform.Services;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
@@ -162,9 +163,8 @@ public abstract class BigBucketItem extends Item implements DispensibleContainer
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        tooltip.add(Component.translatable("item.bigbuckets.big_bucket.desc.fluid", this.getFluid(stack).defaultFluidState().createLegacyBlock().getBlock().getName()));
-        tooltip.add(Component.translatable("item.bigbuckets.big_bucket.desc.capacity", this.getCapacity(stack) / (float) Services.FLUIDS.bucketVolume()));
-        tooltip.add(Component.translatable("item.bigbuckets.big_bucket.desc.fullness", this.getFullness(stack) / (float) Services.FLUIDS.bucketVolume()));
+        var data = this.getBucketStorageData(stack);
+        tooltip.add(Component.translatable("item.bigbuckets.big_bucket.desc.fullness_and_capacity", data.fullness() / (float) Services.FLUIDS.bucketVolume(), data.capacity() / (float) Services.FLUIDS.bucketVolume()).withStyle(ChatFormatting.GRAY));
     }
 
     @Override
