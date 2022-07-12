@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.mixin.transfer.BucketItemAccessor;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -18,7 +19,7 @@ import net.minecraft.world.level.material.Fluids;
 
 import java.util.Optional;
 
-public class FabricBigBucketItem extends BigBucketItem {
+public class FabricBigBucketItem extends BigBucketItem implements CustomDurabilityItem {
     public FabricBigBucketItem(Properties builder) {
         super(builder);
     }
@@ -53,6 +54,29 @@ public class FabricBigBucketItem extends BigBucketItem {
         stack.getOrCreateTag().put("bucketData", BucketStorageData.CODEC.encodeStart(NbtOps.INSTANCE, bucketStorageData.withFluid(bucketStorageData.fluid(), bucketStorageData.data(), bucketStorageData.fullness()-amount)).getOrThrow(false, Constants.LOG::error));
 
         return amount;
+    }
+
+    @Override
+    public boolean shouldShowDurability(ItemStack stack) {
+        return getFluid(stack) != Fluids.EMPTY;
+    }
+
+    @Override
+    public int getMaxDurability(ItemStack stack) {
+        return getCapacity(stack);
+    }
+
+    @Override
+    public int getDurability(ItemStack stack) {
+        return getFullness(stack);
+    }
+
+    @Override
+    public int getDurabilityColor(ItemStack stack) {
+        float f = getDurability(stack);
+        float g = getMaxDurability(stack);
+        float h = Math.max(0.0F, f / g);
+        return Mth.hsvToRgb(h / 3.0F, 1.0F, 1.0F);
     }
 
     @SuppressWarnings("UnstableApiUsage")
