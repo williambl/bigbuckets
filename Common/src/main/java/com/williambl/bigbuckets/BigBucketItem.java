@@ -1,9 +1,11 @@
 package com.williambl.bigbuckets;
 
+import com.mojang.datafixers.util.Pair;
 import com.williambl.bigbuckets.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -32,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.Optional;
 
 @ParametersAreNonnullByDefault
 public abstract class BigBucketItem extends Item implements DispensibleContainerItem {
@@ -209,15 +212,33 @@ public abstract class BigBucketItem extends Item implements DispensibleContainer
         return this.getBucketStorageData(stack).fullness();
     }
 
-    /*
-     * PLATFORM DEPENDENT CODE
-     */
+    public BucketStorageData getBucketStorageData(ItemStack stack) {
+        return BucketStorageData.CODEC.decode(NbtOps.INSTANCE, stack.getOrCreateTagElement("bucketData")).get().left().map(Pair::getFirst).orElseGet(() -> new BucketStorageData(Fluids.EMPTY, Optional.empty(), 0, 0));
+    }
 
-    public abstract BucketStorageData getBucketStorageData(ItemStack stack);
+    public void setBucketStorageData(ItemStack stack, BucketStorageData data) {
+        var tag = stack.getOrCreateTag();
+        tag.put("bucketData", BucketStorageData.CODEC.encodeStart(NbtOps.INSTANCE, data).getOrThrow(false, Constants.LOG::error));
+    }
 
-    public abstract void setCapacity(ItemStack stack, int capacity);
+    public void setCapacity(ItemStack stack, int capacity) {
+        var bucketStorageData = this.getBucketStorageData(stack);
+        this.setBucketStorageData(stack, bucketStorageData.withCapacity(capacity));
+    }
 
-    public abstract int fill(ItemStack stack, Fluid fluid, int amount); //TODO abstract fluidstack some way?
+    public int fill(ItemStack stack, Fluid fluid, int amount) {
+        var bucketStorageData = this.getBucketStorageData(stack);
+        var maxAmount = Math.min(amount, (fluid.isSame(bucketStorageData.fluid()) || bucketStorageData.fluid() == Fluids.EMPTY) ? bucketStorageData.capacity() - bucketStorageData.fullness() : 0);
+        this.setBucketStorageData(stack, bucketStorageData.withFluid(fluid, bucketStorageData.data(), bucketStorageData.fullness()+maxAmount));
 
-    public abstract int drain(ItemStack stack, int drainAmount);
+        return maxAmount;
+    }
+
+    public int drain(ItemStack stack, int drainAmount) {
+        var bucketStorageData = this.getBucketStorageData(stack);
+        var amount = Math.min(drainAmount, bucketStorageData.fullness());
+        this.setBucketStorageData(stack, bucketStorageData.withFluid(bucketStorageData.fluid(), bucketStorageData.data(), bucketStorageData.fullness()-amount));
+
+        return amount;
+    }
 }
