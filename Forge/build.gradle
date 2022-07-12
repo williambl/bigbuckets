@@ -95,6 +95,9 @@ tasks.withType(JavaCompile) {
 
 processResources {
     from project(":Common").sourceSets.main.resources
+    filesMatching("${mod_id}_common.mixins.json") {
+        expand "refmap_target": "${archivesBaseName}-"
+    }
 }
 
 mixin {
