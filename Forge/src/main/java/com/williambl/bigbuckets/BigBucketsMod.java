@@ -21,7 +21,7 @@ public class BigBucketsMod {
 
     public static final RegistryObject<BigBucketItem> BIG_BUCKET_ITEM = ITEMS.register(
             "big_bucket",
-            () -> new ForgeBigBucketItem(new Item.Properties().tab(CreativeModeTab.TAB_MISC))
+            () -> new ForgeBigBucketItem(new Item.Properties().tab(CreativeModeTab.TAB_MISC).stacksTo(1))
     );
 
     public static final RegistryObject<SimpleRecipeSerializer<BigBucketRecipe>> BIG_BUCKET_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register(
