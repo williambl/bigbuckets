@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 public class FabricBigBucketsRegistry implements IBigBucketsRegistry {
     @Override
     public Supplier<BigBucketItem> bigBucketItem() {
-        return null;
+        return () -> BigBucketsMod.BIG_BUCKET_ITEM;
     }
 
     @Override
