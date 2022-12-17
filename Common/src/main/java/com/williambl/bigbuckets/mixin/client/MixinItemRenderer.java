@@ -32,7 +32,8 @@ public abstract class MixinItemRenderer {
         bufferBuilder.vertex(i + k, j + l, 0.0).uv(u1, v1).color(color).endVertex();
         bufferBuilder.vertex(i + k, j + 0, 0.0).uv(u1, v0).color(color).endVertex();
         bufferBuilder.vertex(i + 0, j + 0, 0.0).uv(u0, v0).color(color).endVertex();
-        BufferUploader.drawWithShader(bufferBuilder.end());
+        bufferBuilder.end();
+        BufferUploader.end(bufferBuilder);
     }
 
     @Inject(method = "renderGuiItemDecorations(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;IILjava/lang/String;)V", at = @At("HEAD"))

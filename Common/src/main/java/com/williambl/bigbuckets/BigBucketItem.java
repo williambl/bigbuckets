@@ -8,6 +8,8 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -164,7 +166,7 @@ public abstract class BigBucketItem extends Item implements DispensibleContainer
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
         var data = this.getBucketStorageData(stack);
-        tooltip.add(Component.translatable("item.bigbuckets.big_bucket.desc.fullness_and_capacity", data.fullness() / (float) Services.FLUIDS.bucketVolume(), data.capacity() / (float) Services.FLUIDS.bucketVolume()).withStyle(ChatFormatting.GRAY));
+        tooltip.add(new TranslatableComponent("item.bigbuckets.big_bucket.desc.fullness_and_capacity", data.fullness() / (float) Services.FLUIDS.bucketVolume(), data.capacity() / (float) Services.FLUIDS.bucketVolume()).withStyle(ChatFormatting.GRAY));
     }
 
     @Override
@@ -172,12 +174,12 @@ public abstract class BigBucketItem extends Item implements DispensibleContainer
     public Component getName(ItemStack stack) {
         if (this.getFluid(stack) == Fluids.EMPTY)
             return super.getName(stack);
-        return super.getName(stack).copy().append(Component.literal(" (").append(this.getFluid(stack).defaultFluidState().createLegacyBlock().getBlock().getName()).append(Component.literal(")")));
+        return super.getName(stack).copy().append(new TextComponent(" (").append(this.getFluid(stack).defaultFluidState().createLegacyBlock().getBlock().getName()).append(new TextComponent(")")));
     }
 
     @Override
     public void fillItemCategory(CreativeModeTab itemGroup, NonNullList<ItemStack> itemStacks) {
-        if (this.allowedIn(itemGroup)) {
+        if (this.allowdedIn(itemGroup)) {
             ItemStack stack = new ItemStack(this);
             this.setCapacity(stack, 16 * Services.FLUIDS.bucketVolume());
             itemStacks.add(stack);
